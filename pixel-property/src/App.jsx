@@ -164,7 +164,7 @@ function StartScreen({ onStart }) {
           <rect x="11" y="1" width="2" height="1" fill="#ef4444" />
         </svg>
       ),
-      cash: 150000,
+      cash: 175000,
       credit: 450,
       badgeText: "HARD",
       interest: 0.15,
