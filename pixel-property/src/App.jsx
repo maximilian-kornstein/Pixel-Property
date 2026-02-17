@@ -85,7 +85,7 @@ function StartScreen({ onStart }) {
           <path d="M4 12h2v4H4zM18 12h2v4h-2z" fill="#94a3b8"/>
         </svg>
       ),
-      cash: 150000,
+      cash: 200000,
       credit: 700,
       badgeText: "EASY",
       interest: 0.06,
@@ -125,7 +125,7 @@ function StartScreen({ onStart }) {
           <rect x="16" y="2" width="2" height="1" fill="#ef4444" />
         </svg>
       ),
-      cash: 120000,
+      cash: 175000,
       credit: 600,
       badgeText: "MEDIUM",
       interest: 0.09,
@@ -164,7 +164,7 @@ function StartScreen({ onStart }) {
           <rect x="11" y="1" width="2" height="1" fill="#ef4444" />
         </svg>
       ),
-      cash: 90000,
+      cash: 150000,
       credit: 450,
       badgeText: "HARD",
       interest: 0.15,
@@ -751,23 +751,24 @@ function GameScreen({ difficulty, onGameOver }) {
   };
 
   const allProperties = [
-    { id: 1, name: "Cozy Cottage", price: 45000, rent: 800, type: "starter", color: "#3b82f6" },
-    { id: 2, name: "City Apartment", price: 65000, rent: 1200, type: "apartment", color: "#6366f1" },
-    { id: 3, name: "Suburban Home", price: 85000, rent: 1500, type: "townhouse", color: "#f59e0b" },
-    { id: 4, name: "Modern Condo", price: 72000, rent: 1350, type: "condo", color: "#10b981" },
-    { id: 5, name: "Family Duplex", price: 95000, rent: 1800, type: "duplex", color: "#ec4899" },
-    { id: 6, name: "Office Space", price: 120000, rent: 2500, type: "commercial", color: "#64748b" },
-    { id: 7, name: "Beach Bungalow", price: 78000, rent: 1400, type: "starter", color: "#06b6d4" },
-    { id: 8, name: "Downtown Loft", price: 88000, rent: 1600, type: "apartment", color: "#8b5cf6" },
-    { id: 9, name: "Ranch House", price: 105000, rent: 1900, type: "townhouse", color: "#f97316" },
-  { id: 10, name: "Studio Flat", price: 38000, rent: 650, type: "starter", color: "#14b8a6" },
-  { id: 11, name: "Penthouse", price: 150000, rent: 3000, type: "apartment", color: "#a855f7" },
-  { id: 12, name: "Shopping Mall", price: 200000, rent: 4000, type: "commercial", color: "#475569" },
-  { id: 13, name: "Garden Villa", price: 110000, rent: 2000, type: "condo", color: "#22c55e" },
-  { id: 14, name: "Warehouse", price: 90000, rent: 1700, type: "commercial", color: "#52525b" },
-  { id: 15, name: "Lake Cabin", price: 82000, rent: 1450, type: "starter", color: "#0ea5e9" },
-  { id: 16, name: "Triplex Unit", price: 125000, rent: 2400, type: "duplex", color: "#f43f5e" },
-  ];
+  // Section 8 price range: $20K-$80K
+  { id: 1, name: "Starter Home", price: 35000, rent: 950, type: "starter", color: "#3b82f6" },
+  { id: 2, name: "2BR Apartment", price: 45000, rent: 1100, type: "apartment", color: "#6366f1" },
+  { id: 3, name: "Townhouse", price: 55000, rent: 1300, type: "townhouse", color: "#f59e0b" },
+  { id: 4, name: "Section 8 Condo", price: 42000, rent: 1050, type: "condo", color: "#10b981" },
+  { id: 5, name: "Duplex Unit", price: 65000, rent: 1500, type: "duplex", color: "#ec4899" },
+  { id: 6, name: "Small Commercial", price: 80000, rent: 1800, type: "commercial", color: "#64748b" },
+  { id: 7, name: "Bungalow", price: 38000, rent: 975, type: "starter", color: "#06b6d4" },
+  { id: 8, name: "Flat", price: 48000, rent: 1150, type: "apartment", color: "#8b5cf6" },
+  { id: 9, name: "Ranch House", price: 62000, rent: 1400, type: "townhouse", color: "#f97316" },
+  { id: 10, name: "Studio Unit", price: 28000, rent: 850, type: "starter", color: "#14b8a6" },
+  { id: 11, name: "3BR Apartment", price: 52000, rent: 1250, type: "apartment", color: "#a855f7" },
+  { id: 12, name: "Strip Mall Unit", price: 75000, rent: 1700, type: "commercial", color: "#475569" },
+  { id: 13, name: "Garden Condo", price: 58000, rent: 1350, type: "condo", color: "#22c55e" },
+  { id: 14, name: "Warehouse Space", price: 70000, rent: 1600, type: "commercial", color: "#52525b" },
+  { id: 15, name: "Cottage", price: 40000, rent: 1000, type: "starter", color: "#0ea5e9" },
+  { id: 16, name: "Triplex", price: 68000, rent: 1550, type: "duplex", color: "#f43f5e" },
+];
 
   const [marketProperties, setMarketProperties] = useState([]);
 
@@ -801,6 +802,9 @@ function GameScreen({ difficulty, onGameOver }) {
             premiumTenant: false,
             maintained: false,
           },
+          insurance: Math.round((property.price * 0.01) / 12), // 1% annually = ~0.08% monthly
+          propertyTax: Math.round((property.price * 0.015) / 12), // 1.5% annually
+          maintenance: Math.round((property.price * 0.008) / 12), // 0.8% annually
         },
       ]);
     }
@@ -953,65 +957,119 @@ function GameScreen({ difficulty, onGameOver }) {
   };
 
   const handleNextTurn = () => {
-    if (turn >= maxTurns) {
-      // Game Over - send stats to end screen
-      onGameOver({
-        finalNetWorth: netWorth,
-        finalCash: cash,
-        propertiesOwned: ownedProperties.length,
-        totalRentCollected: totalRentCollected,
-        totalDebt: loans,
-        biggestCrash: biggestCrash,
-        biggestBoom: biggestBoom,
-      });
-      return;
-    }
+  if (turn >= maxTurns) {
+    onGameOver({
+      finalNetWorth: netWorth,
+      finalCash: cash,
+      propertiesOwned: ownedProperties.length,
+      totalRentCollected: totalRentCollected,
+      totalDebt: loans,
+      biggestCrash: biggestCrash,
+      biggestBoom: biggestBoom,
+    });
+    return;
+  }
 
-    const rentCollected = monthlyRent;
-    const monthlyInterestRate = interestRate / 12;
-    const interestPayment = Math.round(loans * monthlyInterestRate);
+  // 1. Collect rent
+  const rentCollected = monthlyRent;
+  
+  // 2. Calculate operating costs
+  const totalInsurance = ownedProperties.reduce((sum, prop) => sum + (prop.insurance || 0), 0);
+  const totalPropertyTax = ownedProperties.reduce((sum, prop) => sum + (prop.propertyTax || 0), 0);
+  const totalMaintenance = ownedProperties.reduce((sum, prop) => {
+    // Maintained upgrade reduces maintenance cost by 50%
+    const cost = prop.maintenance || 0;
+    return sum + (prop.upgrades?.maintained ? cost * 0.5 : cost);
+  }, 0);
+  
+  const totalOperatingCosts = totalInsurance + totalPropertyTax + totalMaintenance;
+  
+  // 3. Pay loan interest
+  const monthlyInterestRate = interestRate / 12;
+  const interestPayment = Math.round(loans * monthlyInterestRate);
+  
+  // 4. Pay loan principal (minimum 1% of outstanding loan per month)
+  const principalPayment = loans > 0 ? Math.round(loans * 0.01) : 0;
+  const totalLoanPayment = interestPayment + principalPayment;
 
-    if (interestPayment > cash + rentCollected && loans > 0) {
-      alert(`⚠️ WARNING: Cannot afford loan interest!\n\nInterest Due: $${interestPayment.toLocaleString()}\nAvailable Cash: $${(cash + rentCollected).toLocaleString()}\n\nSell properties or take more loans!`);
-      return;
-    }
+  // 5. Check if can afford all expenses
+  const totalExpenses = totalOperatingCosts + totalLoanPayment;
+  
+  if (totalExpenses > cash + rentCollected && (loans > 0 || totalOperatingCosts > 0)) {
+    alert(
+      `⚠️ CANNOT AFFORD EXPENSES!\n\n` +
+      `Rent Income: +$${rentCollected.toLocaleString()}\n` +
+      `Insurance: -$${totalInsurance.toLocaleString()}\n` +
+      `Property Tax: -$${totalPropertyTax.toLocaleString()}\n` +
+      `Maintenance: -$${totalMaintenance.toLocaleString()}\n` +
+      `Loan Payment: -$${totalLoanPayment.toLocaleString()}\n\n` +
+      `Total Needed: $${totalExpenses.toLocaleString()}\n` +
+      `Available: $${(cash + rentCollected).toLocaleString()}\n\n` +
+      `Sell properties or take loans!`
+    );
+    return;
+  }
 
-    const netIncome = rentCollected - interestPayment;
-    setCash(prevCash => prevCash + netIncome);
-    setTotalRentCollected(prev => prev + rentCollected);
+  // 6. Apply all financial changes
+  const netIncome = rentCollected - totalOperatingCosts - totalLoanPayment;
+  setCash(prevCash => prevCash + netIncome);
+  setTotalRentCollected(prev => prev + rentCollected);
+  
+  // Reduce loan by principal payment
+  setLoans(prev => Math.max(0, prev - principalPayment));
 
-    fluctuatePropertyValues();
+  // 7. Fluctuate property values
+  fluctuatePropertyValues();
 
-    // Portfolio Diversity Bonus
-    const propertyTypes = new Set(ownedProperties.map(p => p.type));
-    let diversityBonus = 0;
-    if (propertyTypes.size >= 4) {
-      diversityBonus = 500 * propertyTypes.size;
-      setCash(prev => prev + diversityBonus);
-    }
+  // 8. Portfolio Diversity Bonus
+  const propertyTypes = new Set(ownedProperties.map(p => p.type));
+  let diversityBonus = 0;
+  if (propertyTypes.size >= 4) {
+    diversityBonus = 500 * propertyTypes.size;
+    setCash(prev => prev + diversityBonus);
+  }
 
-    const event = triggerMarketEvent();
+  // 9. Trigger random event
+  const event = triggerMarketEvent();
 
-    setTimeout(() => {
-      let summary = `Turn ${turn} Complete!\n\n`;
-      summary += `💰 Rent Collected: +$${rentCollected.toLocaleString()}\n`;
-      summary += `💳 Interest Paid: -$${interestPayment.toLocaleString()}\n`;
-      
-      if (diversityBonus > 0) {
-        summary += `🌟 Diversity Bonus: +$${diversityBonus.toLocaleString()} (${propertyTypes.size} types)\n`;
-      }
-      
-      summary += `📊 Net Income: ${netIncome >= 0 ? '+' : ''}$${netIncome.toLocaleString()}\n`;
-      
-      if (event) {
-        summary += `\n${event.name}\n${event.message}`;
-      }
-      
-      alert(summary);
-    }, 100);
-    
-    setTurn(turn + 1);
-  };
+  // 10. Build detailed summary
+  let summary = `Turn ${turn} Complete!\n\n`;
+  summary += `💰 Rent: +$${rentCollected.toLocaleString()}\n`;
+  summary += `\nOPERATING COSTS:\n`;
+  summary += `🛡️ Insurance: -$${totalInsurance.toLocaleString()}\n`;
+  summary += `🏛️ Property Tax: -$${totalPropertyTax.toLocaleString()}\n`;
+  summary += `🔧 Maintenance: -$${totalMaintenance.toLocaleString()}\n`;
+  
+  if (loans > 0) {
+    summary += `\nLOAN PAYMENT:\n`;
+    summary += `💳 Interest: -$${interestPayment.toLocaleString()}\n`;
+    summary += `📉 Principal: -$${principalPayment.toLocaleString()}\n`;
+    summary += `💰 Remaining Debt: $${Math.max(0, loans - principalPayment).toLocaleString()}\n`;
+  }
+  
+  if (diversityBonus > 0) {
+    summary += `\n🌟 Diversity Bonus: +$${diversityBonus.toLocaleString()}\n`;
+  }
+  
+  summary += `\n📊 NET INCOME: ${netIncome >= 0 ? '+' : ''}$${netIncome.toLocaleString()}`;
+
+  // Show event in modal
+  if (event) {
+    setCurrentEvent({
+      name: event.name,
+      message: `${summary}\n\n━━━━━━━━━━━━━━━━\n\n${event.message}`,
+      type: event.type,
+    });
+  } else {
+    setCurrentEvent({
+      name: "📋 TURN SUMMARY",
+      message: summary,
+      type: "good",
+    });
+  }
+  
+  setTurn(turn + 1);
+};
 
   const isBankrupt = cash < 0 && ownedProperties.length === 0;
   
@@ -1119,30 +1177,37 @@ function GameScreen({ difficulty, onGameOver }) {
         </div>
 
         <div style={gameStyles.statsBar}>
-          <div style={gameStyles.statBox}>
-            <div style={gameStyles.statLabel}>💰 CASH</div>
-            <div style={gameStyles.statValue}>${cash.toLocaleString()}</div>
-          </div>
+  <div style={gameStyles.statBox}>
+    <div style={gameStyles.statLabel}>💰 CASH</div>
+    <div style={gameStyles.statValue}>${cash.toLocaleString()}</div>
+  </div>
 
-          <div style={gameStyles.statBox}>
-            <div style={gameStyles.statLabel}>🏠 PROPERTIES</div>
-            <div style={gameStyles.statValue}>{ownedProperties.length}</div>
-          </div>
+  <div style={gameStyles.statBox}>
+    <div style={gameStyles.statLabel}>🏠 PROPERTIES</div>
+    <div style={gameStyles.statValue}>{ownedProperties.length}</div>
+  </div>
 
-          <div style={gameStyles.statBox}>
-            <div style={gameStyles.statLabel}>📊 NET WORTH</div>
-            <div style={{...gameStyles.statValue, color: netWorth >= 0 ? '#10b981' : '#ef4444'}}>
-              ${netWorth.toLocaleString()}
-            </div>
-          </div>
+  <div style={gameStyles.statBox}>
+    <div style={gameStyles.statLabel}>📊 NET WORTH</div>
+    <div style={{...gameStyles.statValue, color: netWorth >= 0 ? '#10b981' : '#ef4444'}}>
+      ${netWorth.toLocaleString()}
+    </div>
+  </div>
 
-          <div style={gameStyles.statBox}>
-            <div style={gameStyles.statLabel}>💵 MONTHLY RENT</div>
-            <div style={{...gameStyles.statValue, color: '#10b981'}}>
-              +${monthlyRent.toLocaleString()}
-            </div>
-          </div>
-        </div>
+  <div style={gameStyles.statBox}>
+    <div style={gameStyles.statLabel}>💵 GROSS RENT</div>
+    <div style={{...gameStyles.statValue, color: '#10b981', fontSize: '1rem'}}>
+      +${monthlyRent.toLocaleString()}
+    </div>
+  </div>
+  
+  <div style={gameStyles.statBox}>
+    <div style={gameStyles.statLabel}>💳 TOTAL DEBT</div>
+    <div style={{...gameStyles.statValue, color: '#ef4444', fontSize: '1rem'}}>
+      ${loans.toLocaleString()}
+    </div>
+  </div>
+</div>
 
         <div style={gameStyles.mainContent}>
           <div style={gameStyles.section}>
@@ -1219,6 +1284,13 @@ function GameScreen({ difficulty, onGameOver }) {
                   const valueChange = ((property.currentValue - property.originalPrice) / property.originalPrice) * 100;
                   const rentAmount = property.upgrades?.renovated ? Math.round(property.rent * 1.25) : property.rent;
                   
+                  // Calculate net monthly income
+  const insurance = property.insurance || 0;
+  const propertyTax = property.propertyTax || 0;
+  const maintenance = property.upgrades?.maintained ? (property.maintenance || 0) * 0.5 : (property.maintenance || 0);
+  const totalCosts = insurance + propertyTax + maintenance;
+  const netMonthly = rentAmount - totalCosts;
+
                   return (
                     <div key={index} style={gameStyles.portfolioCard}>
                       <div className="pixel-art" style={gameStyles.portfolioIcon}>
